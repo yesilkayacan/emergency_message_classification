@@ -16,14 +16,28 @@ from sqlalchemy import create_engine
 app = Flask(__name__)
 
 def tokenize(text):
+    '''Function normalizes the text input, removes non letter or number characters, tokenizes the text.
+    Removes the stopword tokens and lemmatizes the result.
+    
+    Args
+    ----
+    text: String
+        Text data which will be processed
+        
+    Returns
+    -------
+    clean_tokens: List (String)
+        Normalized, cleaned, tokenized and lemmatized list of words
+    '''
+
+    stop_words = stopwords.words("english")
+    
+    text = re.sub(r"[a-zA-Z0-9]", " ", text.lower())
+    
     tokens = word_tokenize(text)
     lemmatizer = WordNetLemmatizer()
-
-    clean_tokens = []
-    for tok in tokens:
-        clean_tok = lemmatizer.lemmatize(tok).lower().strip()
-        clean_tokens.append(clean_tok)
-
+    
+    clean_tokens = [lemmatizer.lemmatize(tok).strip() for tok in tokens if tok not in stop_words]
     return clean_tokens
 
 # load data
@@ -31,7 +45,7 @@ engine = create_engine('sqlite:///../data/DisasterResponse.db')
 df = pd.read_sql_table('DisasterMessageTable', engine)
 
 # load model
-model = joblib.load("../models/classifier_2.pkl")
+model = joblib.load("../models/classifier.pkl")
 
 # index webpage displays cool visuals and receives user input text for model
 @app.route('/')

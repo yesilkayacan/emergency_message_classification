@@ -11,7 +11,7 @@ from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import GridSearchCV
 from sklearn.multioutput import MultiOutputClassifier
-from sklearn.metrics import classification_report, accuracy_score, precision_score, recall_score
+from sklearn.metrics import classification_report, balanced_accuracy_score, precision_score, recall_score
 
 import re
 import nltk
@@ -94,10 +94,10 @@ def build_model():
     parameters = {
         'vect__ngram_range': ((1, 1), (1, 2)),
         'vect__max_df': (0.5, 0.75, 1.0),
-        'clf__estimator__n_estimators': [20, 30, 50]
+        'clf__estimator__n_estimators': [50, 100, 150]
         }
     
-    cv = GridSearchCV(pipeline, param_grid=parameters, n_jobs=1, verbose=2, cv=5)
+    cv = GridSearchCV(pipeline, param_grid=parameters, n_jobs=1, verbose=2, cv=5, scoring='f1_macro')
     
     return cv
 
@@ -132,7 +132,7 @@ def evaluate_model(model, X_test, Y_test, category_names):
     precision_list = []
     recall_list = []
     for i in range(len(category_names)):
-        accuracy_list.append(accuracy_score(Y_test[:,i], y_pred[:,i]))
+        accuracy_list.append(balanced_accuracy_score(Y_test[:,i], y_pred[:,i]))
         precision_list.append(precision_score(Y_test[:,i], y_pred[:,i], average='weighted'))
         recall_list.append(recall_score(Y_test[:,i], y_pred[:,i], average='weighted'))
         

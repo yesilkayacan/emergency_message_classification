@@ -2,8 +2,16 @@ import json
 import plotly
 import pandas as pd
 
-from nltk.stem import WordNetLemmatizer
+import re
+import nltk
+from nltk.corpus import stopwords
+from nltk.stem.wordnet import WordNetLemmatizer
 from nltk.tokenize import word_tokenize
+
+nltk.download('punkt')
+nltk.download('stopwords')
+nltk.download('wordnet')
+nltk.download('averaged_perceptron_tagger')
 import pickle
 
 from flask import Flask
@@ -12,6 +20,10 @@ import plotly.graph_objs as gobj
 import joblib
 from sqlalchemy import create_engine
 
+nltk.download('punkt')
+nltk.download('stopwords')
+nltk.download('wordnet')
+nltk.download('averaged_perceptron_tagger')
 
 app = Flask(__name__)
 
@@ -122,6 +134,7 @@ def go():
 
     # use model to predict classification for query
     classification_labels = model.predict([query])[0]
+    
     classification_results = dict(zip(df.columns[4:], classification_labels))
 
     # This will render the go.html Please see that file.

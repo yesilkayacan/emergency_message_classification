@@ -192,7 +192,7 @@ def main():
         database_filepath, model_filepath = sys.argv[1:]
         print('Loading data...\n    DATABASE: {}'.format(database_filepath))
         X, Y, category_names = load_data(database_filepath)
-        X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.2)
+        X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.2, stratify=Y[:,0])
         
         print('Building model...')
         model = build_model()

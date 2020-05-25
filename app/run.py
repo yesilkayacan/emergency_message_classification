@@ -27,6 +27,30 @@ nltk.download('averaged_perceptron_tagger')
 
 app = Flask(__name__)
 
+def f1_multioutput(y_true, y_pred):
+    '''Calculates multioutput classification average f1-score.
+    
+    Args
+    ----
+    y_true: numpy.array
+        Ground truth of the labels
+    y_pred: numpy.array
+        Predictions of the labels
+        
+    Returns
+    -------
+    average_f1_score: Float
+        Averaged F1-score of all the labels
+    '''
+
+    f1_score_list = []
+    for i in range(y_true.shape[1]):
+        f1 = f1_score(y_true=y_true[:,i], y_pred=y_pred[:,i], average='macro')
+        f1_score_list.append(f1)
+
+    average_f1_score = np.mean(f1_score_list)
+    return average_f1_score
+
 def tokenize(text):
     '''Function normalizes the text input, removes non letter or number characters, tokenizes the text.
     Removes the stopword tokens and lemmatizes the result.

@@ -11,7 +11,7 @@ from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import GridSearchCV
 from sklearn.multioutput import MultiOutputClassifier
-from sklearn.metrics import classification_report, balanced_accuracy_score, precision_score, recall_score
+from sklearn.metrics import classification_report, balanced_accuracy_score, precision_score, recall_score, make_scorer, f1_score
 
 import re
 import nltk
@@ -76,6 +76,31 @@ def tokenize(text):
     return clean_tokens
 
 
+def f1_multioutput(y_true, y_pred):
+    '''Calculates multioutput classification average f1-score.
+    
+    Args
+    ----
+    y_true: numpy.array
+        Ground truth of the labels
+    y_pred: numpy.array
+        Predictions of the labels
+        
+    Returns
+    -------
+    average_f1_score: Float
+        Averaged F1-score of all the labels
+    '''
+    
+    f1_score_list = []
+    for i in range(y_true.shape[1]):
+        f1 = f1_score(y_true=y_true[:,i], y_pred=y_pred[:,i], average='macro')
+        f1_score_list.append(f1)
+
+    average_f1_score = np.mean(f1_score_list)
+    return average_f1_score
+
+
 def build_model():
     '''Create the predictor pipeline and list of parameters to perform gridsearch on. Return the gridsearch object.
     
@@ -84,6 +109,8 @@ def build_model():
     cv: sklearn.model_selection.GridSearchCV object
         Gridsearch object with the pipeline and parameter set embedded
     '''
+    
+    scorer = make_scorer(f1_multioutput, greater_is_better=True)
 
     pipeline = Pipeline([
         ('vect', CountVectorizer(tokenizer=tokenize)),
@@ -94,10 +121,10 @@ def build_model():
     parameters = {
         'vect__ngram_range': ((1, 1), (1, 2)),
         'vect__max_df': (0.5, 0.75, 1.0),
-        'clf__estimator__n_estimators': [50, 100, 150]
+        'clf__estimator__n_estimators': [2, 100, 150]
         }
     
-    cv = GridSearchCV(pipeline, param_grid=parameters, n_jobs=1, verbose=2, cv=5, scoring='f1_macro')
+    cv = GridSearchCV(pipeline, param_grid=parameters, n_jobs=1, verbose=2, cv=5, scoring=scorer)
     
     return cv
 

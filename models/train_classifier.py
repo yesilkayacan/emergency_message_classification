@@ -8,7 +8,7 @@ from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.pipeline import Pipeline, FeatureUnion
 from sklearn.model_selection import train_test_split
 from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
-from sklearn.ensemble import RandomForestClassifier
+from sklearn.naive_bayes import MultinomialNB
 from sklearn.model_selection import GridSearchCV
 from sklearn.multioutput import MultiOutputClassifier
 from sklearn.metrics import classification_report, balanced_accuracy_score, precision_score, recall_score, make_scorer, f1_score
@@ -115,13 +115,13 @@ def build_model():
     pipeline = Pipeline([
         ('vect', CountVectorizer(tokenizer=tokenize)),
         ('tfidf', TfidfTransformer()),
-        ('clf', MultiOutputClassifier(RandomForestClassifier()))
+        ('clf', MultiOutputClassifier(MultinomialNB(), n_jobs=-1))
         ])
     
     parameters = {
         'vect__ngram_range': ((1, 1), (1, 2)),
         'vect__max_df': (0.5, 0.75, 1.0),
-        'clf__estimator__n_estimators': [50, 100, 150]
+        'clf__estimator__alpha': (1e-2, 1e-3)
         }
     
     cv = GridSearchCV(pipeline, param_grid=parameters, n_jobs=1, verbose=10, cv=5, scoring=scorer)

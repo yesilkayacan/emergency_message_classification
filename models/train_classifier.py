@@ -91,7 +91,7 @@ def f1_multioutput(y_true, y_pred):
     average_f1_score: Float
         Averaged F1-score of all the labels
     '''
-    
+
     f1_score_list = []
     for i in range(y_true.shape[1]):
         f1 = f1_score(y_true=y_true[:,i], y_pred=y_pred[:,i], average='macro')
@@ -121,10 +121,10 @@ def build_model():
     parameters = {
         'vect__ngram_range': ((1, 1), (1, 2)),
         'vect__max_df': (0.5, 0.75, 1.0),
-        'clf__estimator__n_estimators': [2, 100, 150]
+        'clf__estimator__n_estimators': [50, 100, 150]
         }
     
-    cv = GridSearchCV(pipeline, param_grid=parameters, n_jobs=1, verbose=2, cv=5, scoring=scorer)
+    cv = GridSearchCV(pipeline, param_grid=parameters, n_jobs=1, verbose=10, cv=5, scoring=scorer)
     
     return cv
 

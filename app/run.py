@@ -8,7 +8,7 @@ import pickle
 
 from flask import Flask
 from flask import render_template, request, jsonify
-from plotly.graph_objs import Bar
+import plotly.graph_objs as gobj
 # from sklearn.externals import joblib # cannot find module issue
 from sqlalchemy import create_engine
 
@@ -46,13 +46,12 @@ def index():
     genre_counts = df.groupby('genre').count()['message']
     genre_names = list(genre_counts.index)
 
-
     # create visuals
     # TODO: Below is an example - modify to create your own visuals
     graphs = [
         {
             'data': [
-                Bar(
+                gobj.Bar(
                     x=genre_names,
                     y=genre_counts
                 )
@@ -69,7 +68,35 @@ def index():
             }
         }
     ]
-    print(graphs)
+
+    ## second plot work
+    # extract data for visuals
+    categrories = list(df.columns[4:])
+    n_data_in_categories = df[categrories].sum(axis=0)
+
+    # create visuals
+    graphs.append(
+        {
+            'data': [
+                gobj.Bar(
+                    x=categrories,
+                    y=n_data_in_categories
+                )
+            ],
+
+            'layout': {
+                'title': 'Distribution of Emergency Categories in Training Data',
+                'yaxis': {
+                    'title': "Count"
+                },
+                'xaxis': {
+                    'title': "Emergency Categories",
+                    'tickangle': "-45"
+                }
+            }
+        }
+    )
+
     # encode plotly graphs in JSON
     ids = ["graph-{}".format(i) for i, _ in enumerate(graphs)]
     graphJSON = json.dumps(graphs, cls=plotly.utils.PlotlyJSONEncoder)

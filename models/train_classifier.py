@@ -103,7 +103,29 @@ def build_model():
 
 
 def evaluate_model(model, X_test, Y_test, category_names):
-    ''' '''
+    '''Using the model predicts the output of the test set. Using this prediction calculates the
+    accuracy, precision and recall of the model.
+    
+    Args
+    ----
+    model: sklearn predictor
+        Trained model performance to be evaluated
+    X_test: numpy.array
+        Test set features
+    Y_test: numpy.array
+        Test set true target values
+    category_names: List (string)
+        Category names of the targets
+    
+    Returns
+    -------
+    model_accuracy: Float
+        Accuracy of the model
+    model_precision: Float
+        Precision of the model
+    model_recall: Float
+        Recall of the model
+    '''
     y_pred = model.predict(X_test)
     
     accuracy_list = []
@@ -114,12 +136,24 @@ def evaluate_model(model, X_test, Y_test, category_names):
         precision_list.append(precision_score(Y_test[:,i], y_pred[:,i], average='weighted'))
         recall_list.append(recall_score(Y_test[:,i], y_pred[:,i], average='weighted'))
         
+    model_accuracy = np.mean(accuracy_list)
+    model_precision = np.mean(precision_list)
+    model_recall = np.mean(recall_list)
     print('Model performance:\naccuracy: {}\nprecisicion: {}\nrecall: {}'
-          .format(np.mean(accuracy_list), np.mean(precision_list), np.mean(recall_list)))
-    return np.mean(accuracy_list), np.mean(precision_list), np.mean(recall_list)
+          .format(model_accuracy, model_precision, model_recall))
+    return model_accuracy, model_precision, model_recall
 
 
 def save_model(model, model_filepath):
+    '''Saves the input model to the given file path.
+    
+    Args
+    ----
+    model: sklearn predictor
+        Predictor model to be saved
+    model_filepath: String
+        File path of the model to be saved
+    '''
     
     with open(model_filepath, 'wb') as f:
         pickle.dump(model, f)

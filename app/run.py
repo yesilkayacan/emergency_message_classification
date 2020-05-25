@@ -9,7 +9,7 @@ import pickle
 from flask import Flask
 from flask import render_template, request, jsonify
 import plotly.graph_objs as gobj
-# from sklearn.externals import joblib # cannot find module issue
+import joblib
 from sqlalchemy import create_engine
 
 
@@ -31,10 +31,7 @@ engine = create_engine('sqlite:///../data/DisasterResponse.db')
 df = pd.read_sql_table('DisasterMessageTable', engine)
 
 # load model
-# model = joblib.load("../models/classifier_2.pkl") # throws exception
-s = pickle.dumps("../models/classifier_2.pkl")
-model = pickle.loads(s)
-
+model = joblib.load("../models/classifier_2.pkl")
 
 # index webpage displays cool visuals and receives user input text for model
 @app.route('/')
@@ -42,12 +39,10 @@ model = pickle.loads(s)
 def index():
 
     # extract data needed for visuals
-    # TODO: Below is an example - modify to extract data for your own visuals
     genre_counts = df.groupby('genre').count()['message']
     genre_names = list(genre_counts.index)
 
-    # create visuals
-    # TODO: Below is an example - modify to create your own visuals
+    # create visual1
     graphs = [
         {
             'data': [
@@ -74,7 +69,7 @@ def index():
     categrories = list(df.columns[4:])
     n_data_in_categories = df[categrories].sum(axis=0)
 
-    # create visuals
+    # create visual2
     graphs.append(
         {
             'data': [

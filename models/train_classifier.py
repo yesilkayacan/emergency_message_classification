@@ -92,12 +92,12 @@ def build_model():
         ])
     
     parameters = {
-        #'vect__ngram_range': ((1, 1), (1, 2)), # removed for debugging
-        #'vect__max_df': (0.5, 0.75, 1.0), # removed for debugging
-        'clf__estimator__n_neighbors': [2]
+        'vect__ngram_range': ((1, 1), (1, 2)),
+        'vect__max_df': (0.5, 0.75, 1.0),
+        'clf__estimator__n_neighbors': [2, 4, 6]
         }
     
-    cv = GridSearchCV(pipeline, param_grid=parameters, n_jobs=1, verbose=2, cv=2) # single fold CV for debugging. Need to remove later
+    cv = GridSearchCV(pipeline, param_grid=parameters, n_jobs=1, verbose=2, cv=5)
     
     return cv
 
@@ -154,7 +154,7 @@ def save_model(model, model_filepath):
     model_filepath: String
         File path of the model to be saved
     '''
-    
+
     with open(model_filepath, 'wb') as f:
         pickle.dump(model, f)
 

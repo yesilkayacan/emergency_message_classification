@@ -20,13 +20,13 @@
 Use below commands in the terminal to use the functions.
 
 - To run ETL pipeline that cleans data and stores in database
-      $ python data/process_data.py data/disaster_messages.csv data/disaster_categories.csv data/DisasterResponse.db
+      `$ python data/process_data.py data/disaster_messages.csv data/disaster_categories.csv data/DisasterResponse.db`
 
 - To run ML pipeline that trains classifier and saves
-      $ python models/train_classifier.py data/DisasterResponse.db models/classifier.pkl
+      `$ python models/train_classifier.py data/DisasterResponse.db models/classifier.pkl`
 
 - Run the following command in the app's directory to run web app.
-      $ python run.py
+      `$ python run.py`
 
 The web app can be access from the browser at http://0.0.0.0:3001/
 
